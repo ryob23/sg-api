@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة تحويل كثافة النفط</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Tajawal', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-blue-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-md">
+        <!-- العنوان الرئيسي -->
+        <div class="bg-blue-600 text-white rounded-t-xl p-4 shadow-lg">
+            <h1 class="text-2xl font-bold text-center">
+                <i class="fas fa-calculator ml-2"></i>
+                حاسبة تحويل كثافة النفط
+            </h1>
+            <p class="text-blue-100 text-sm text-center mt-1">API/SG Converter</p>
+        </div>
+
+        <!-- بطاقة التطبيق -->
+        <div class="bg-white rounded-b-xl shadow-lg overflow-hidden">
+            <!-- علامات التبويب -->
+            <div class="flex border-b border-blue-100">
+                <button id="sgToApiTab" class="flex-1 py-3 px-4 font-medium text-blue-600 border-b-2 border-blue-600">
+                    <i class="fas fa-arrow-left ml-2"></i>
+                    SG إلى API
+                </button>
+                <button id="apiToSgTab" class="flex-1 py-3 px-4 font-medium text-gray-500">
+                    API إلى SG
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+
+            <!-- محتوى التحويل من SG إلى API -->
+            <div id="sgToApiContent" class="p-6">
+                <div class="mb-6">
+                    <label for="sgValue" class="block text-blue-800 font-medium mb-2">
+                        <i class="fas fa-tint ml-2"></i>
+                        أدخل قيمة SG (الكثافة النسبية)
+                    </label>
+                    <input type="number" id="sgValue" step="0.0001" 
+                           class="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                           placeholder="مثال: 0.8927">
+                </div>
+
+                <button id="calculateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition duration-200 flex items-center justify-center">
+                    <i class="fas fa-calculator ml-2"></i>
+                    احسب التحويل
+                </button>
+
+                <!-- نتيجة التحويل -->
+                <div id="resultContainer" class="mt-8 hidden">
+                    <div class="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                        <h3 class="text-blue-800 font-bold mb-2">
+                            <i class="fas fa-info-circle ml-2"></i>
+                            نتيجة التحويل
+                        </h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">قيمة API:</span>
+                            <span id="apiResult" class="text-2xl font-bold text-blue-600">27.01</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- محتوى التحويل من API إلى SG (مخفي في البداية) -->
+            <div id="apiToSgContent" class="p-6 hidden">
+                <div class="mb-6">
+                    <label for="apiValue" class="block text-blue-800 font-medium mb-2">
+                        <i class="fas fa-tint ml-2"></i>
+                        أدخل قيمة API
+                    </label>
+                    <input type="number" id="apiValue" step="0.01" 
+                           class="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                           placeholder="مثال: 27.01">
+                </div>
+
+                <button id="calculateApiToSgBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition duration-200 flex items-center justify-center">
+                    <i class="fas fa-calculator ml-2"></i>
+                    احسب التحويل
+                </button>
+
+                <!-- نتيجة التحويل -->
+                <div id="sgResultContainer" class="mt-8 hidden">
+                    <div class="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                        <h3 class="text-blue-800 font-bold mb-2">
+                            <i class="fas fa-info-circle ml-2"></i>
+                            نتيجة التحويل
+                        </h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">قيمة SG:</span>
+                            <span id="sgResult" class="text-2xl font-bold text-blue-600">0.8927</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- قسم المعلومات -->
+            <div class="bg-gray-50 border-t border-gray-200 p-4">
+                <h3 class="text-blue-800 font-bold mb-2 flex items-center">
+                    <i class="fas fa-info-circle ml-2"></i>
+                    معلومات عن التحويل
+                </h3>
+                <div class="text-gray-700 text-sm">
+                    <p class="mb-2">معادلة التحويل من SG إلى API:</p>
+                    <div class="bg-white p-2 rounded border border-gray-200 mb-3">
+                        <code>API = (141.5 / SG) - 131.5</code>
+                    </div>
+                    <p class="mb-2">معادلة التحويل من API إلى SG:</p>
+                    <div class="bg-white p-2 rounded border border-gray-200">
+                        <code>SG = 141.5 / (API + 131.5)</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- رسالة نجاح -->
+        <div id="successMessage" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg hidden transition-all duration-300">
+            <i class="fas fa-check-circle ml-2"></i>
+            تم الحساب بنجاح
+        </div>
+    </div>
+
+    <script>
+        // تبديل بين علامات التبويب
+        document.getElementById('sgToApiTab').addEventListener('click', function() {
+            document.getElementById('sgToApiContent').classList.remove('hidden');
+            document.getElementById('apiToSgContent').classList.add('hidden');
+            this.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+            document.getElementById('apiToSgTab').classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+            document.getElementById('apiToSgTab').classList.add('text-gray-500');
+        });
+
+        document.getElementById('apiToSgTab').addEventListener('click', function() {
+            document.getElementById('apiToSgContent').classList.remove('hidden');
+            document.getElementById('sgToApiContent').classList.add('hidden');
+            this.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+            document.getElementById('sgToApiTab').classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+            document.getElementById('sgToApiTab').classList.add('text-gray-500');
+        });
+
+        // حساب SG إلى API
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const sgValue = parseFloat(document.getElementById('sgValue').value);
+            
+            if (isNaN(sgValue) || sgValue <= 0) {
+                alert('الرجاء إدخال قيمة SG صحيحة');
+                return;
+            }
+
+            const apiValue = (141.5 / sgValue) - 131.5;
+            document.getElementById('apiResult').textContent = apiValue.toFixed(2);
+            document.getElementById('resultContainer').classList.remove('hidden');
+            
+            showSuccessMessage();
+        });
+
+        // حساب API إلى SG
+        document.getElementById('calculateApiToSgBtn').addEventListener('click', function() {
+            const apiValue = parseFloat(document.getElementById('apiValue').value);
+            
+            if (isNaN(apiValue)) {
+                alert('الرجاء إدخال قيمة API صحيحة');
+                return;
+            }
+
+            const sgValue = 141.5 / (apiValue + 131.5);
+            document.getElementById('sgResult').textContent = sgValue.toFixed(4);
+            document.getElementById('sgResultContainer').classList.remove('hidden');
+            
+            showSuccessMessage();
+        });
+
+        // إدخال القيم عن طريق لوحة المفاتيح
+        document.getElementById('sgValue').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('calculateBtn').click();
+            }
+        });
+
+        document.getElementById('apiValue').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('calculateApiToSgBtn').click();
+            }
+        });
+
+        // عرض رسالة النجاح
+        function showSuccessMessage() {
+            const message = document.getElementById('successMessage');
+            message.classList.remove('hidden');
+            message.classList.add('block');
+            
+            setTimeout(() => {
+                message.classList.remove('block');
+                message.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
